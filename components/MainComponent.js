@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Directory from './DirectoryComponent';
-import { CAMPSITES } from '../shared/campsites';
+import CampsiteInfo from './CampsiteInfoComponent';
+// import { Expo } from 'expo';
+// import  { Constants } from 'expo';
+// import { CAMPSITES } from '../shared/campsites';
 import { View, Platform } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
@@ -18,7 +21,7 @@ const DirectoryNavigator = createStackNavigator(
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
-                color: '#fff'
+                color: 'red'
             }
         }
     }
