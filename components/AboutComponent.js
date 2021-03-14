@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-
 import { ScrollView } from 'react-native-gesture-handler';
-import { createStackNavigator } from 'react-navigation-stack';
-import { PARTNERS } from '../shared/partners';
 import { FlatList } from 'react-native';
 import { Card, ListItem, Button, Icon, Text } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+import Loading from './LoadingComponent';
 
 
-// const AboutNavigator = createStackNavigator(
-//     {
-//         About: { screen: About}
-//     }
-// )
+const mapStateToProps = state => {
+    return {
+        partners: state.partners
+    };
+}; 
+
 const Mission = () => {
     return (
 
@@ -24,12 +25,6 @@ const Mission = () => {
     )
 }
 class About extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            partners: PARTNERS
-        }
-    }
     static navigationOptions = {
         title: 'About us'
     }
@@ -39,10 +34,33 @@ class About extends Component {
                 <ListItem 
                 title={item.name}
                 subtitle={item.description}
-                leftAvatar={{source: require('./images/bootstrap-logo.png')}}
+                leftAvatar={{source: {uri: baseUrl + item.image}}}
                 />
             )
         }
+        if (this.props.partners.isLoading) {
+            return (
+                <ScrollView>
+                    <Mission />
+                    <Card
+                        title='Community Partners'>
+                        <Loading />
+                    </Card>
+                </ScrollView>
+            );
+        }
+        if (this.props.partners.errMess) {
+            return (
+                <ScrollView>
+                    <Mission />
+                    <Card
+                        title='Community Partners'>
+                        <Text>{this.props.partners.errMess}</Text>
+                    </Card>
+                </ScrollView>
+            );
+        }
+       
         return (
             <ScrollView>
                 <Mission />
@@ -50,7 +68,7 @@ class About extends Component {
                 title="Community partners" 
                 >
                     <FlatList
-                    data={this.state.partners}
+                    data={this.props.partners.partners}
                     renderItem={renderPartner}
                     keyExtractor={item => item.id.toString()}
                     />
@@ -61,5 +79,5 @@ class About extends Component {
     }
 }
 
-export default About;
+export default connect(mapStateToProps)(About);
  
