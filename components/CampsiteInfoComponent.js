@@ -15,17 +15,15 @@ const mapStateToProps = state => {
         favorites: state.favorites
     };
 };
-
 const mapDispatchToProps = {
     postFavorite: campsiteId => (postFavorite(campsiteId)),
     postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text))
 };
-
-
 function RenderCampsite(props) {
     const {campsite} = props;
     const view = React.createRef();
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
+    const recognizeComment = ({dx}) => (dx > 200) ? true : false;
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderGrant: () => {
@@ -52,8 +50,11 @@ function RenderCampsite(props) {
                     ],
                     { cancelable: false }
                 );
-            }
-            return true;
+            } else if (recognizeComment(gestureState)) {
+                props.onShowModal()
+            } else if (!recognizeComment(gestureState) || !recognizeDrag(gestureState)) {
+                return true
+            } 
         }
     });
     if (campsite) {
@@ -96,7 +97,6 @@ function RenderCampsite(props) {
     }
     return <View />;
 }
-
 function RenderComments({comments}) {
     const renderCommentItem = ({item}) => {
         return (
@@ -178,15 +178,13 @@ class CampsiteInfo extends Component {
                     onRequestClose={() => this.toggleModal()}
                 >
                     <View style={styles.modal}>
-              
                             <Rating 
                                 style={{paddingVertical: 10}}
                                 showRating
                                 startingValue={this.state.rating}
                                 imageSize={40}
                                 onFinishRating={rating => this.setState({rating: rating})}
-                            />
-                            
+                            /> 
                                 <Input 
                                     placeholder='Author'
                                     leftIcon={  <Icon 
